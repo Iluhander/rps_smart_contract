@@ -30,6 +30,8 @@ contract RPSContract {
         address winner
     );
 
+    event ChoicesDone();
+
     constructor() {}
 
     function getChoicesHashes() external view returns(bytes32[2] memory) {
@@ -40,6 +42,19 @@ contract RPSContract {
         return choices;
     }
 
+    // Handling reaching the maximum amount of people.
+    modifier gameAvailable() {
+        require(playersCurrentCount < playersMaxCount, maxPlayersResponce);
+        _;
+    }
+
+    // Checking did the game end.
+    modifier gameStarted() {
+        require(playersCurrentCount > 0, "Game wasn't started.");
+        _;
+    }
+
+
     /*
     * The parameter "_choiceHash" should be a result of calling 
     * keccak256(abi.encodePacked(yourString, suffix)),
@@ -47,16 +62,17 @@ contract RPSContract {
     * suffix is some random string, needed for the result of calling
     * keccak256 to be unpredictable.
     */
-    function commitChoice(bytes32 _choiceHash) external {
-        // Reaching maximum players count error.
-        require(playersCurrentCount < playersMaxCount, maxPlayersResponce);
-
+    function commitChoice(bytes32 _choiceHash) external gameAvailable {
         addresses[playersCurrentCount] = msg.sender;
         choicesHashes[playersCurrentCount] = _choiceHash;
         choices[playersCurrentCount] = None;
 
         playersCurrentCount++;
 
+        // Notifying players, that it's time to make reveals.
+        if (playersCurrentCount == playersMaxCount) {
+            emit ChoicesDone();
+        }
     }
 
     function getPlayer(address a) private view returns (uint32) {
@@ -68,7 +84,7 @@ contract RPSContract {
         return player;
     }
 
-    function revealChoice(string memory _choice, string memory _suffix) external {
+    function revealChoice(string memory _choice, string memory _suffix) external gameStarted {
         uint player = getPlayer(msg.sender);
 
         // Incorrect hash error.
