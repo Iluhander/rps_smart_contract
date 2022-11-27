@@ -145,4 +145,17 @@ describe("RPSPlayerContract", function() {
         // Checking hashes.
         expect(hashes[0]).to.equal(commitment);
     });
+
+    it("Should reveal", async function() {
+        // Committing.
+        await playerDeployed.makeCommitment();
+
+        // Revealing.
+        await playerDeployed.reveal();
+
+        let choices = await rpsDeployed.getChoices();
+
+        // Checking choices.
+        expect(choices[0]).to.not.equal("");
+    });
 });
