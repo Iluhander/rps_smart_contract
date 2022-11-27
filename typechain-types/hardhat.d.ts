@@ -16,12 +16,21 @@ declare module "hardhat/types/runtime" {
       name: "RPSContract",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RPSContract__factory>;
+    getContractFactory(
+      name: "RPSPlayerContract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RPSPlayerContract__factory>;
 
     getContractAt(
       name: "RPSContract",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.RPSContract>;
+    getContractAt(
+      name: "RPSPlayerContract",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RPSPlayerContract>;
 
     // default types
     getContractFactory(

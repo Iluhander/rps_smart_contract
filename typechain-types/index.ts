@@ -2,5 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { RPSContract } from "./RPSContract";
+export type { RPSPlayerContract } from "./RPSPlayerContract";
 export * as factories from "./factories";
 export { RPSContract__factory } from "./factories/RPSContract__factory";
+export { RPSPlayerContract__factory } from "./factories/RPSPlayerContract__factory";

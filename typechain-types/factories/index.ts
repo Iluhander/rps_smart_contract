@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { RPSContract__factory } from "./RPSContract__factory";
+export { RPSPlayerContract__factory } from "./RPSPlayerContract__factory";

@@ -1,5 +1,14 @@
+/*
+* PLEASE, CHECK THE WHOLE FILE.
+*
+* ! General RPS tests are at the beginning !
+* 
+* ! Smart contract integration tests are at the end !
+*/
+
 const { expect } = require('chai');
 
+// General (RPSConract unit) tests.
 describe("RPSContract", function() {
     let contractDeployed;
 
@@ -101,5 +110,39 @@ describe("RPSContract", function() {
         // Checking the winner.
         let winnerResponse = await contractDeployed.getWinner();
         expect(winnerResponse).to.equal(owner.address);
+    });
+});
+
+// Integration tests.
+describe("RPSPlayerContract", function() {
+    let playerDeployed;
+    
+    let rpsDeployed;
+
+    beforeEach(async function() {
+         // Preparing RPS smart contract.
+         const RPSContract = await hre.ethers.getContractFactory("RPSContract");
+         rpsDeployed = await RPSContract.deploy();
+         await rpsDeployed.deployed();
+
+        // Preparing player contract.
+        const RPSPlayerContract = await hre.ethers.getContractFactory("RPSPlayerContract");
+        playerDeployed = await RPSPlayerContract.deploy();
+
+        await playerDeployed.deployed();
+
+        // Providing the address.
+        await playerDeployed.provideRPSContractAddress(rpsDeployed.address);
+    });
+
+    it("Should commit", async function() {
+        await playerDeployed.makeCommitment();
+
+        let hashes = await rpsDeployed.getChoicesHashes();
+
+        let commitment = await playerDeployed.getCommitment();
+
+        // Checking hashes.
+        expect(hashes[0]).to.equal(commitment);
     });
 });
